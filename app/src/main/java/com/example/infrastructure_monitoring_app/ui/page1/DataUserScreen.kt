@@ -1,19 +1,22 @@
 package com.example.infrastructure_monitoring_app.ui.page1
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.infrastructure_monitoring_app.data.viewmodel.MonitoringViewModel
+import com.example.infrastructure_monitoring_app.ui.CustomButton
+import com.example.infrastructure_monitoring_app.ui.CustomDropdown
+import com.example.infrastructure_monitoring_app.ui.CustomTextField
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,7 +34,6 @@ fun DataUserScreen(navController: NavController, viewModel: MonitoringViewModel)
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
-    // Tampilkan DatePickerDialog bila showDatePicker true
     if (showDatePicker) {
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
@@ -53,80 +55,50 @@ fun DataUserScreen(navController: NavController, viewModel: MonitoringViewModel)
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        // Kolom Tanggal dengan trailing icon kalender
-        OutlinedTextField(
+        CustomTextField(
             value = tanggal,
             onValueChange = {},
-            label = { Text("Tanggal") },
+            label = "Tanggal",
             readOnly = true,
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(Icons.Default.DateRange, contentDescription = "Pilih Tanggal")
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
+            }
         )
 
-        OutlinedTextField(
+        CustomTextField(
             value = namaOperator,
             onValueChange = { viewModel.namaOperator.value = it },
-            label = { Text("Nama Operator Alat Berat") },
-            modifier = Modifier.fillMaxWidth()
+            label = "Nama Operator Alat Berat"
         )
 
-        OutlinedTextField(
+        CustomTextField(
             value = noHpOperator,
             onValueChange = { viewModel.onNoHpOperatorChange(it) },
-            label = { Text("No HP Operator") },
+            label = "No HP Operator",
             isError = !isNoHpValid,
-            modifier = Modifier.fillMaxWidth()
+            errorMessage = if (!isNoHpValid) "No HP harus 10-13 digit" else null
         )
-        if (!isNoHpValid) {
-            Text("No HP harus 10-13 digit", color = MaterialTheme.colors.error)
-        }
 
-        OutlinedTextField(
+        CustomTextField(
             value = namaVendor,
             onValueChange = { viewModel.namaVendor.value = it },
-            label = { Text("Nama Vendor (PT/CV)") },
-            modifier = Modifier.fillMaxWidth()
+            label = "Nama Vendor (PT/CV)"
         )
 
-        var expanded by remember { mutableStateOf(false) }
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-            OutlinedTextField(
-                value = regional,
-                onValueChange = {},
-                label = { Text("Regional") },
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                regionalOptions.forEach { option ->
-                    DropdownMenuItem(
-                        onClick = {
-                            viewModel.regionalPage1.value = option
-                            expanded = false
-                        }
-                    ) { Text(option) }
-                }
-            }
-        }
+        CustomDropdown(
+            value = regional,
+            options = regionalOptions,
+            label = "Regional",
+            onValueChange = { viewModel.regionalPage1.value = it }
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
+        CustomButton(
             onClick = { navController.navigate("page2") },
+            text = "Next",
             enabled = tanggal.isNotEmpty() && namaOperator.isNotEmpty() && noHpOperator.isNotEmpty() &&
-                    namaVendor.isNotEmpty() && regional.isNotEmpty() && isNoHpValid,
-            modifier = Modifier.fillMaxWidth()
-        ) { Text("Next") }
+                    namaVendor.isNotEmpty() && regional.isNotEmpty() && isNoHpValid
+        )
     }
 }

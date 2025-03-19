@@ -5,16 +5,22 @@ import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.infrastructure_monitoring_app.data.viewmodel.MonitoringViewModel
+import com.example.infrastructure_monitoring_app.ui.CustomButton
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,39 +60,59 @@ fun DokumentasiAlatScreen(navController: NavController, viewModel: MonitoringVie
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Button(onClick = {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
-            launcherSebelum.launch(null)
-        }) { Text("Ambil Foto Sebelum") }
+        CustomButton(
+            onClick = {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+                launcherSebelum.launch(null)
+            },
+            text = "Ambil Foto Sebelum"
+        )
         if (dokumentasiSebelum.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(dokumentasiSebelum),
                 contentDescription = "Dokumentasi Sebelum",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(top = 8.dp)
+                    .border(1.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.small)
             )
-            Text("Taken: ${File(dokumentasiSebelum).name.split("_")[1].removeSuffix(".jpg")}")
+            Text(
+                text = "Taken: ${File(dokumentasiSebelum).name.split("_")[1].removeSuffix(".jpg")}",
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
 
-        Button(onClick = {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
-            launcherSesudah.launch(null)
-        }) { Text("Ambil Foto Sesudah") }
+        CustomButton(
+            onClick = {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+                launcherSesudah.launch(null)
+            },
+            text = "Ambil Foto Sesudah"
+        )
         if (dokumentasiSesudah.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(dokumentasiSesudah),
                 contentDescription = "Dokumentasi Sesudah",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(top = 8.dp)
+                    .border(1.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.small)
             )
-            Text("Taken: ${File(dokumentasiSesudah).name.split("_")[1].removeSuffix(".jpg")}")
+            Text(
+                text = "Taken: ${File(dokumentasiSesudah).name.split("_")[1].removeSuffix(".jpg")}",
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
+        CustomButton(
             onClick = {
                 viewModel.saveData()
                 navController.popBackStack("home", inclusive = false)
             },
+            text = "Kirim",
             enabled = dokumentasiSebelum.isNotEmpty() && dokumentasiSesudah.isNotEmpty()
-        ) { Text("Kirim") }
+        )
     }
 }

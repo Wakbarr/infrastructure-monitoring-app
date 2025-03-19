@@ -5,15 +5,23 @@ import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.infrastructure_monitoring_app.data.viewmodel.MonitoringViewModel
+import com.example.infrastructure_monitoring_app.ui.CustomButton
+import com.example.infrastructure_monitoring_app.ui.CustomTextField
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -51,71 +59,86 @@ fun JamKerjaAlatScreen(navController: NavController, viewModel: MonitoringViewMo
         }
     }
 
-    // Request camera permission
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            // Permission granted, proceed with camera
-        } else {
-            // Handle permission denied
+            // Permission granted
         }
     }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        OutlinedTextField(
+        CustomTextField(
             value = jamKerja,
             onValueChange = { viewModel.onJamKerjaChange(it) },
-            label = { Text("Jam Kerja Tracktor") },
+            label = "Jam Kerja Tracktor",
             isError = !isJamKerjaValid,
-            modifier = Modifier.fillMaxWidth()
+            errorMessage = if (!isJamKerjaValid) "Harus angka positif" else null
         )
-        if (!isJamKerjaValid) Text("Harus angka positif", color = MaterialTheme.colors.error)
 
-        Button(onClick = {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
-            launcherJkt.launch(null)
-        }) { Text("Ambil Foto JKT Awal") }
+        CustomButton(
+            onClick = {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+                launcherJkt.launch(null)
+            },
+            text = "Ambil Foto JKT Awal"
+        )
         if (fotoJktAwal.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(fotoJktAwal),
                 contentDescription = "Foto JKT",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(top = 8.dp)
+                    .border(1.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.small)
             )
-            Text("Taken: ${File(fotoJktAwal).name.split("_")[1].removeSuffix(".jpg")}")
+            Text(
+                text = "Taken: ${File(fotoJktAwal).name.split("_")[1].removeSuffix(".jpg")}",
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
 
-        OutlinedTextField(
+        CustomTextField(
             value = bbm,
             onValueChange = { viewModel.onBbmChange(it) },
-            label = { Text("BBM (Liter)") },
+            label = "BBM (Liter)",
             isError = !isBbmValid,
-            modifier = Modifier.fillMaxWidth()
+            errorMessage = if (!isBbmValid) "Harus angka positif" else null
         )
-        if (!isBbmValid) Text("Harus angka positif", color = MaterialTheme.colors.error)
 
-        Button(onClick = {
-            permissionLauncher.launch(Manifest.permission.CAMERA)
-            launcherBon.launch(null)
-        }) { Text("Ambil Foto Bon BBM") }
+        CustomButton(
+            onClick = {
+                permissionLauncher.launch(Manifest.permission.CAMERA)
+                launcherBon.launch(null)
+            },
+            text = "Ambil Foto Bon BBM"
+        )
         if (fotoBonBbm.isNotEmpty()) {
             Image(
                 painter = rememberAsyncImagePainter(fotoBonBbm),
                 contentDescription = "Foto Bon",
-                modifier = Modifier.size(100.dp)
+                modifier = Modifier
+                    .size(120.dp)
+                    .padding(top = 8.dp)
+                    .border(1.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.small)
             )
-            Text("Taken: ${File(fotoBonBbm).name.split("_")[1].removeSuffix(".jpg")}")
+            Text(
+                text = "Taken: ${File(fotoBonBbm).name.split("_")[1].removeSuffix(".jpg")}",
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
 
-        OutlinedTextField(
+        CustomTextField(
             value = realisasiKerja,
             onValueChange = { viewModel.realisasiKerja.value = it },
-            label = { Text("Realisasi Kerja Alat (Mtr)") },
-            modifier = Modifier.fillMaxWidth()
+            label = "Realisasi Kerja Alat (Mtr)"
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
+        CustomButton(
             onClick = { navController.navigate("page9") },
-            enabled = jamKerja.isNotEmpty() && fotoJktAwal.isNotEmpty() && bbm.isNotEmpty() && fotoBonBbm.isNotEmpty() && realisasiKerja.isNotEmpty() && isJamKerjaValid && isBbmValid
-        ) { Text("Next") }
+            text = "Next",
+            enabled = jamKerja.isNotEmpty() && fotoJktAwal.isNotEmpty() && bbm.isNotEmpty() &&
+                    fotoBonBbm.isNotEmpty() && realisasiKerja.isNotEmpty() && isJamKerjaValid && isBbmValid
+        )
     }
 }

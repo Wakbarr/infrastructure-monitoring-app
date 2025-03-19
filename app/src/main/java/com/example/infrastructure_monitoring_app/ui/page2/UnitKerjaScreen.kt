@@ -1,12 +1,17 @@
 package com.example.infrastructure_monitoring_app.ui.page2
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.infrastructure_monitoring_app.data.viewmodel.MonitoringViewModel
+import com.example.infrastructure_monitoring_app.ui.CustomButton
+import com.example.infrastructure_monitoring_app.ui.CustomDropdown
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -16,37 +21,16 @@ fun UnitKerjaScreen(navController: NavController, viewModel: MonitoringViewModel
     val regionalOptions = listOf("Kebun Bahjambi", "Kebun Mep", "Kebun Gub")
 
     Column(modifier = Modifier.padding(16.dp)) {
-        var expanded by remember { mutableStateOf(false) }
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-            OutlinedTextField(
-                value = regional,
-                onValueChange = {},
-                label = { Text("Regional") },
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.fillMaxWidth()
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                regionalOptions.forEach { option ->
-                    DropdownMenuItem(
-                        onClick = {
-                            viewModel.regionalPage2.value = option
-                            expanded = false
-                        }
-                    ) { Text(option) }
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
+        CustomDropdown(
+            value = regional,
+            options = regionalOptions,
+            label = "Regional",
+            onValueChange = { viewModel.regionalPage2.value = it }
+        )
+        CustomButton(
             onClick = { navController.navigate("page3") },
+            text = "Next",
             enabled = regional.isNotEmpty()
-        ) { Text("Next") }
+        )
     }
 }
