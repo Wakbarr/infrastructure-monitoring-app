@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -26,6 +27,8 @@ fun CustomTextField(
     isError: Boolean = false,
     errorMessage: String? = null,
     readOnly: Boolean = false,
+    singleLine: Boolean = true,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     trailingIcon: @Composable (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -44,6 +47,8 @@ fun CustomTextField(
             label = null,
             isError = isError,
             readOnly = readOnly,
+            singleLine = singleLine,
+            keyboardOptions = keyboardOptions,
             trailingIcon = trailingIcon,
             modifier = Modifier
                 .fillMaxWidth()

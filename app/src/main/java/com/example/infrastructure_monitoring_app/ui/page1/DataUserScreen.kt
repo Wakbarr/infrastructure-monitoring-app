@@ -3,6 +3,7 @@ package com.example.infrastructure_monitoring_app.ui.page1
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -11,6 +12,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.infrastructure_monitoring_app.data.viewmodel.MonitoringViewModel
@@ -60,6 +62,7 @@ fun DataUserScreen(navController: NavController, viewModel: MonitoringViewModel)
             onValueChange = {},
             label = "Tanggal",
             readOnly = true,
+            singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { showDatePicker = true }) {
                     Icon(Icons.Default.DateRange, contentDescription = "Pilih Tanggal")
@@ -70,21 +73,28 @@ fun DataUserScreen(navController: NavController, viewModel: MonitoringViewModel)
         CustomTextField(
             value = namaOperator,
             onValueChange = { viewModel.namaOperator.value = it },
-            label = "Nama Operator Alat Berat"
+            label = "Nama Operator Alat Berat",
+            singleLine = true
         )
 
         CustomTextField(
             value = noHpOperator,
-            onValueChange = { viewModel.onNoHpOperatorChange(it) },
+            onValueChange = { newValue ->
+                val filtered = newValue.filter { it.isDigit() }
+                viewModel.onNoHpOperatorChange(filtered)
+            },
             label = "No HP Operator",
             isError = !isNoHpValid,
-            errorMessage = if (!isNoHpValid) "No HP harus 10-13 digit" else null
+            errorMessage = if (!isNoHpValid) "No HP harus 10-13 digit" else null,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
         CustomTextField(
             value = namaVendor,
             onValueChange = { viewModel.namaVendor.value = it },
-            label = "Nama Vendor (PT/CV)"
+            label = "Nama Vendor (PT/CV)",
+            singleLine = true
         )
 
         CustomDropdown(

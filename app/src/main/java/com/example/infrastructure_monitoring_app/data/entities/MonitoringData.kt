@@ -28,5 +28,9 @@ data class MonitoringData(
     val realisasiKerja: String,
     val kendalaOperasional: String,
     val dokumentasiSebelum: String,
-    val dokumentasiSesudah: String
+    val dokumentasiSesudah: String,
+    val jamStart: String,
+    val jamMulaiBekerja: String,
+    val jamSelesaiBekerja: String,
+    val jamStop: String
 )

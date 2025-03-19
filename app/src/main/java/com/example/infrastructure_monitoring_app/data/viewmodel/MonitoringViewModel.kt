@@ -40,7 +40,11 @@ class MonitoringViewModel(private val repository: MonitoringRepository) : ViewMo
     // Page 7
     val pekerjaan = MutableStateFlow("")
 
-    // Page 8
+    // Page 8 - Updated with new time fields
+    val jamStart = MutableStateFlow("")
+    val jamMulaiBekerja = MutableStateFlow("")
+    val jamSelesaiBekerja = MutableStateFlow("")
+    val jamStop = MutableStateFlow("")
     val jamKerja = MutableStateFlow("")
     val fotoJktAwal = MutableStateFlow("")
     val bbm = MutableStateFlow("")
@@ -62,14 +66,24 @@ class MonitoringViewModel(private val repository: MonitoringRepository) : ViewMo
         isNoHpValid.value = newNoHp.length in 10..13 && newNoHp.all { it.isDigit() }
     }
 
-    fun onJamKerjaChange(newJamKerja: String) {
-        jamKerja.value = newJamKerja
-        isJamKerjaValid.value = newJamKerja.toFloatOrNull()?.let { it > 0 } ?: false
-    }
-
     fun onBbmChange(newBbm: String) {
         bbm.value = newBbm
         isBbmValid.value = newBbm.toFloatOrNull()?.let { it > 0 } ?: false
+    }
+
+    // Fungsi untuk mengatur Jam Kerja dengan validasi
+    fun setJamKerja(time: String) {
+        jamKerja.value = time
+        isJamKerjaValid.value = isValidJamKerja(time)
+    }
+
+    // Validasi Jam Kerja
+    private fun isValidJamKerja(time: String): Boolean {
+        val parts = time.split(":")
+        if (parts.size != 2) return false
+        val hours = parts[0].toIntOrNull() ?: return false
+        val minutes = parts[1].toIntOrNull() ?: return false
+        return hours >= 0 && minutes >= 0 && (hours > 0 || minutes > 0)
     }
 
     private fun isDataValid(): Boolean {
@@ -97,6 +111,10 @@ class MonitoringViewModel(private val repository: MonitoringRepository) : ViewMo
                 blok = blok.value,
                 objekKerja = objekKerja.value,
                 pekerjaan = pekerjaan.value,
+                jamStart = jamStart.value,
+                jamMulaiBekerja = jamMulaiBekerja.value,
+                jamSelesaiBekerja = jamSelesaiBekerja.value,
+                jamStop = jamStop.value,
                 jamKerja = jamKerja.value,
                 fotoJktAwal = fotoJktAwal.value,
                 bbm = bbm.value,
